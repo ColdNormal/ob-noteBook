@@ -1,6 +1,102 @@
 {
   "recentFiles": [
     {
+      "basename": "Spring Boot如何统一封装接口",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot如何统一封装接口.md"
+    },
+    {
+      "basename": "Spring Boot日志",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot日志.md"
+    },
+    {
+      "basename": "Spring Boot接口参数检验",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口参数检验.md"
+    },
+    {
+      "basename": "Spring Boot插件——lombok",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件——lombok.md"
+    },
+    {
+      "basename": "README",
+      "path": "02笔记库/Spring Boot学习笔记/README.md"
+    },
+    {
+      "basename": "Spring Boot常用注解",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot常用注解.md"
+    },
+    {
+      "basename": "Spring Boot基础——特性、MVC分层",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot基础——特性、MVC分层.md"
+    },
+    {
+      "basename": "Spring Boot  CURD demo复盘",
+      "path": "02笔记库/项目/Spring Boot  CURD demo复盘.md"
+    },
+    {
+      "basename": "學習eladmin的前置知識，快速瀏覽即可",
+      "path": "02笔记库/项目/學習eladmin的前置知識，快速瀏覽即可.md"
+    },
+    {
+      "basename": "2025年4月24日",
+      "path": "02笔记库/项目/2025年4月24日.md"
+    },
+    {
+      "basename": "快速上手业务",
+      "path": "02笔记库/项目/快速上手业务.md"
+    },
+    {
+      "basename": "9aa24375608c4af261ae6a31ee859dca",
+      "path": "附件/9aa24375608c4af261ae6a31ee859dca.png"
+    },
+    {
+      "basename": "请先阅读这里（Readme）",
+      "path": "请先阅读这里（Readme）.md"
+    },
+    {
+      "basename": "202109121613第一张ZK笔记",
+      "path": "Zettelkasten/202109121613第一张ZK笔记.md"
+    },
+    {
+      "basename": "ZK笔记模板",
+      "path": "模板/ZK笔记模板.md"
+    },
+    {
+      "basename": "前端御三家学习建议（AI）",
+      "path": "02笔记库/后端/前端御三家学习建议（AI）.md"
+    },
+    {
+      "basename": "面向面试的编程面试",
+      "path": "02笔记库/后端/面向面试的编程面试.md"
+    },
+    {
+      "basename": "后端最小可用技术栈",
+      "path": "02笔记库/后端/后端最小可用技术栈.md"
+    },
+    {
+      "basename": "后端学习路线",
+      "path": "02笔记库/后端/后端学习路线.md"
+    },
+    {
+      "basename": "后端学习计划",
+      "path": "02笔记库/后端/后端学习计划.md"
+    },
+    {
+      "basename": "List List Integer （泛型的理解）",
+      "path": "02笔记库/后端/java笔记/List List Integer （泛型的理解）.md"
+    },
+    {
+      "basename": "hash碰撞要怎么处理",
+      "path": "02笔记库/后端/java笔记/hash碰撞要怎么处理.md"
+    },
+    {
+      "basename": "面向接口编程",
+      "path": "02笔记库/后端/java笔记/面向接口编程.md"
+    },
+    {
+      "basename": "面向抽象编程2",
+      "path": "02笔记库/后端/java笔记/面向抽象编程2.md"
+    },
+    {
       "basename": "Excalidraw演示.excalidraw",
       "path": "00演示文件夹/Excalidraw演示.excalidraw.md"
     },
@@ -9,12 +105,8 @@
       "path": "00演示文件夹/看板演示.md"
     },
     {
-      "basename": "请先阅读这里（Readme）",
-      "path": "请先阅读这里（Readme）.md"
-    },
-    {
-      "basename": "这里可以放置你的笔记",
-      "path": "02笔记库/这里可以放置你的笔记.md"
+      "basename": "Pasted image 20210912162722",
+      "path": "附件/Pasted image 20210912162722.png"
     }
   ],
   "omittedPaths": [],
