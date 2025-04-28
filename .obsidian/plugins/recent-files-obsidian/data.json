@@ -1,24 +1,12 @@
 {
   "recentFiles": [
     {
-      "basename": "Spring Boot如何统一封装接口",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot如何统一封装接口.md"
-    },
-    {
-      "basename": "Spring Boot日志",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot日志.md"
-    },
-    {
-      "basename": "Spring Boot接口参数检验",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口参数检验.md"
-    },
-    {
-      "basename": "Spring Boot插件——lombok",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件——lombok.md"
-    },
-    {
       "basename": "README",
       "path": "02笔记库/Spring Boot学习笔记/README.md"
+    },
+    {
+      "basename": "Spring Boot插件——Lombok",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件——Lombok.md"
     },
     {
       "basename": "Spring Boot常用注解",
@@ -27,6 +15,30 @@
     {
       "basename": "Spring Boot基础——特性、MVC分层",
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot基础——特性、MVC分层.md"
+    },
+    {
+      "basename": "Spring Boot接口参数检验",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口参数检验.md"
+    },
+    {
+      "basename": "Spring Boot日志",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot日志.md"
+    },
+    {
+      "basename": "Spring Boot如何统一封装接口",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot如何统一封装接口.md"
+    },
+    {
+      "basename": "请先阅读这里（Readme）",
+      "path": "请先阅读这里（Readme）.md"
+    },
+    {
+      "basename": "git commit后没有在Github上看见",
+      "path": "02笔记库/零碎的知识点/git/git commit后没有在Github上看见.md"
+    },
+    {
+      "basename": "git完整工作流",
+      "path": "02笔记库/零碎的知识点/git/git完整工作流.md"
     },
     {
       "basename": "Spring Boot  CURD demo复盘",
@@ -47,10 +59,6 @@
     {
       "basename": "9aa24375608c4af261ae6a31ee859dca",
       "path": "附件/9aa24375608c4af261ae6a31ee859dca.png"
-    },
-    {
-      "basename": "请先阅读这里（Readme）",
-      "path": "请先阅读这里（Readme）.md"
     },
     {
       "basename": "202109121613第一张ZK笔记",
