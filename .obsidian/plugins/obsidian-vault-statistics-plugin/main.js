@@ -2,7 +2,7 @@
 
 var obsidian = require('obsidian');
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -33,67 +33,836 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+function __generator(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+}
+
+var Formatter = /** @class */ (function () {
+    function Formatter() {
+    }
+    return Formatter;
+}());
+/**
+ * {@link DecimalUnitFormatter} provides an implementation of {@link Formatter}
+ * that outputs a integers in a standard decimal format with grouped thousands.
+ */
+var DecimalUnitFormatter = /** @class */ (function (_super) {
+    __extends(DecimalUnitFormatter, _super);
+    /**
+     * @param unit the unit of the value being formatted.
+     * @constructor
+     */
+    function DecimalUnitFormatter(unit) {
+        var _this = _super.call(this) || this;
+        _this.unit = unit;
+        _this.numberFormat = Intl.NumberFormat('en-US', { style: 'decimal' });
+        return _this;
+    }
+    DecimalUnitFormatter.prototype.format = function (value) {
+        return "".concat(this.numberFormat.format(value), " ").concat(this.unit);
+    };
+    return DecimalUnitFormatter;
+}(Formatter));
+/**
+ * {@link ScalingUnitFormatter}
+ */
+var ScalingUnitFormatter = /** @class */ (function (_super) {
+    __extends(ScalingUnitFormatter, _super);
+    /**
+     * @param numberFormat An instance of {@link Intl.NumberFormat} to use to
+     * format the scaled value.
+     */
+    function ScalingUnitFormatter(numberFormat) {
+        var _this = _super.call(this) || this;
+        _this.numberFormat = numberFormat;
+        return _this;
+    }
+    ScalingUnitFormatter.prototype.format = function (value) {
+        var _a = this.scale(value), scaledValue = _a[0], scaledUnit = _a[1];
+        return "".concat(this.numberFormat.format(scaledValue), " ").concat(scaledUnit);
+    };
+    return ScalingUnitFormatter;
+}(Formatter));
+/**
+ * {@link BytesFormatter} formats values that represent a size in bytes as a
+ * value in bytes, kilobytes, megabytes, gigabytes, etc.
+ */
+var BytesFormatter = /** @class */ (function (_super) {
+    __extends(BytesFormatter, _super);
+    function BytesFormatter() {
+        return _super.call(this, Intl.NumberFormat('en-US', {
+            style: 'decimal',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })) || this;
+    }
+    BytesFormatter.prototype.scale = function (value) {
+        var units = ["bytes", "KB", "MB", "GB", "TB", "PB"];
+        while (value > 1024 && units.length > 0) {
+            value = value / 1024;
+            units.shift();
+        }
+        return [value, units[0]];
+    };
+    return BytesFormatter;
+}(ScalingUnitFormatter));
+
+var VaultMetrics = /** @class */ (function (_super) {
+    __extends(VaultMetrics, _super);
+    function VaultMetrics() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.files = 0;
+        _this.notes = 0;
+        _this.attachments = 0;
+        _this.size = 0;
+        _this.links = 0;
+        _this.words = 0;
+        return _this;
+    }
+    VaultMetrics.prototype.reset = function () {
+        this.files = 0;
+        this.notes = 0;
+        this.attachments = 0;
+        this.size = 0;
+        this.links = 0;
+        this.words = 0;
+    };
+    VaultMetrics.prototype.dec = function (metrics) {
+        this.files -= (metrics === null || metrics === void 0 ? void 0 : metrics.files) || 0;
+        this.notes -= (metrics === null || metrics === void 0 ? void 0 : metrics.notes) || 0;
+        this.attachments -= (metrics === null || metrics === void 0 ? void 0 : metrics.attachments) || 0;
+        this.size -= (metrics === null || metrics === void 0 ? void 0 : metrics.size) || 0;
+        this.links -= (metrics === null || metrics === void 0 ? void 0 : metrics.links) || 0;
+        this.words -= (metrics === null || metrics === void 0 ? void 0 : metrics.words) || 0;
+        this.trigger("updated");
+    };
+    VaultMetrics.prototype.inc = function (metrics) {
+        this.files += (metrics === null || metrics === void 0 ? void 0 : metrics.files) || 0;
+        this.notes += (metrics === null || metrics === void 0 ? void 0 : metrics.notes) || 0;
+        this.attachments += (metrics === null || metrics === void 0 ? void 0 : metrics.attachments) || 0;
+        this.size += (metrics === null || metrics === void 0 ? void 0 : metrics.size) || 0;
+        this.links += (metrics === null || metrics === void 0 ? void 0 : metrics.links) || 0;
+        this.words += (metrics === null || metrics === void 0 ? void 0 : metrics.words) || 0;
+        this.trigger("updated");
+    };
+    VaultMetrics.prototype.on = function (name, callback, ctx) {
+        return _super.prototype.on.call(this, "updated", callback, ctx);
+    };
+    return VaultMetrics;
+}(obsidian.Events));
+
+/**
+ * The {@link UnitTokenizer} is a constant tokenizer that always returns an
+ * empty list.
+ */
+var UnitTokenizer = /** @class */ (function () {
+    function UnitTokenizer() {
+    }
+    UnitTokenizer.prototype.tokenize = function (_) {
+        return [];
+    };
+    return UnitTokenizer;
+}());
+/**
+ * {@link MarkdownTokenizer} understands how to tokenize markdown text into word
+ * tokens.
+ */
+var MarkdownTokenizer = /** @class */ (function () {
+    function MarkdownTokenizer() {
+    }
+    MarkdownTokenizer.prototype.isNonWord = function (token) {
+        var NON_WORDS = /^\W+$/;
+        return !!NON_WORDS.exec(token);
+    };
+    MarkdownTokenizer.prototype.isNumber = function (token) {
+        var NUMBER = /^\d+(\.\d+)?$/;
+        return !!NUMBER.exec(token);
+    };
+    MarkdownTokenizer.prototype.isCodeBlockHeader = function (token) {
+        var CODE_BLOCK_HEADER = /^```\w+$/;
+        return !!CODE_BLOCK_HEADER.exec(token);
+    };
+    MarkdownTokenizer.prototype.stripHighlights = function (token) {
+        var STRIP_HIGHLIGHTS = /^(==)?(.*?)(==)?$/;
+        return STRIP_HIGHLIGHTS.exec(token)[2];
+    };
+    MarkdownTokenizer.prototype.stripFormatting = function (token) {
+        var STRIP_FORMATTING = /^(_+|\*+)?(.*?)(_+|\*+)?$/;
+        return STRIP_FORMATTING.exec(token)[2];
+    };
+    MarkdownTokenizer.prototype.stripPunctuation = function (token) {
+        var STRIP_PUNCTUATION = /^(`|\.|:|"|,|!|\?)?(.*?)(`|\.|:|"|,|!|\?)?$/;
+        return STRIP_PUNCTUATION.exec(token)[2];
+    };
+    MarkdownTokenizer.prototype.stripWikiLinks = function (token) {
+        var STRIP_WIKI_LINKS = /^(\[\[)?(.*?)(\]\])?$/;
+        return STRIP_WIKI_LINKS.exec(token)[2];
+    };
+    MarkdownTokenizer.prototype.stripAll = function (token) {
+        if (token === "") {
+            return token;
+        }
+        var isFixedPoint = false;
+        while (!isFixedPoint) {
+            var prev = token;
+            token = [token].
+                map(this.stripHighlights).
+                map(this.stripFormatting).
+                map(this.stripPunctuation).
+                map(this.stripWikiLinks)[0];
+            isFixedPoint = isFixedPoint || prev === token;
+        }
+        return token;
+    };
+    MarkdownTokenizer.prototype.tokenize = function (content) {
+        var _this = this;
+        if (content.trim() === "") {
+            return [];
+        }
+        else {
+            var WORD_BOUNDARY = /[ \n\r\t\"\|,\(\)\[\]/]+/;
+            var words = content.
+                split(WORD_BOUNDARY).
+                filter(function (token) { return !_this.isNonWord(token); }).
+                filter(function (token) { return !_this.isNumber(token); }).
+                filter(function (token) { return !_this.isCodeBlockHeader(token); }).
+                map(function (token) { return _this.stripAll(token); }).
+                filter(function (token) { return token.length > 0; });
+            return words;
+        }
+    };
+    return MarkdownTokenizer;
+}());
+var UNIT_TOKENIZER = new UnitTokenizer();
+var MARKDOWN_TOKENIZER = new MarkdownTokenizer();
+
+var FileType;
+(function (FileType) {
+    FileType[FileType["Unknown"] = 0] = "Unknown";
+    FileType[FileType["Note"] = 1] = "Note";
+    FileType[FileType["Attachment"] = 2] = "Attachment";
+})(FileType || (FileType = {}));
+var VaultMetricsCollector = /** @class */ (function () {
+    function VaultMetricsCollector(owner) {
+        this.data = new Map();
+        this.backlog = new Array();
+        this.vaultMetrics = new VaultMetrics();
+        this.owner = owner;
+    }
+    VaultMetricsCollector.prototype.setVault = function (vault) {
+        this.vault = vault;
+        return this;
+    };
+    VaultMetricsCollector.prototype.setMetadataCache = function (metadataCache) {
+        this.metadataCache = metadataCache;
+        return this;
+    };
+    VaultMetricsCollector.prototype.setVaultMetrics = function (vaultMetrics) {
+        this.vaultMetrics = vaultMetrics;
+        return this;
+    };
+    VaultMetricsCollector.prototype.start = function () {
+        var _this = this;
+        var _a;
+        this.owner.registerEvent(this.vault.on("create", function (file) { _this.onfilecreated(file); }));
+        this.owner.registerEvent(this.vault.on("modify", function (file) { _this.onfilemodified(file); }));
+        this.owner.registerEvent(this.vault.on("delete", function (file) { _this.onfiledeleted(file); }));
+        this.owner.registerEvent(this.vault.on("rename", function (file, oldPath) { _this.onfilerenamed(file, oldPath); }));
+        this.owner.registerEvent(this.metadataCache.on("resolve", function (file) { _this.onfilemodified(file); }));
+        this.owner.registerEvent(this.metadataCache.on("changed", function (file) { _this.onfilemodified(file); }));
+        this.data.clear();
+        this.backlog = new Array();
+        (_a = this.vaultMetrics) === null || _a === void 0 ? void 0 : _a.reset();
+        this.vault.getFiles().forEach(function (file) {
+            if (!(file instanceof obsidian.TFolder)) {
+                _this.push(file);
+            }
+        });
+        this.owner.registerInterval(+setInterval(function () { _this.processBacklog(); }, 2000));
+        return this;
+    };
+    VaultMetricsCollector.prototype.push = function (fileOrPath) {
+        if (fileOrPath instanceof obsidian.TFolder) {
+            return;
+        }
+        var path = (fileOrPath instanceof obsidian.TFile) ? fileOrPath.path : fileOrPath;
+        if (!this.backlog.contains(path)) {
+            this.backlog.push(path);
+        }
+    };
+    VaultMetricsCollector.prototype.processBacklog = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var path, file, metrics;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.backlog.length > 0)) return [3 /*break*/, 2];
+                        path = this.backlog.shift();
+                        file = this.vault.getAbstractFileByPath(path);
+                        return [4 /*yield*/, this.collect(file)];
+                    case 1:
+                        metrics = _a.sent();
+                        this.update(path, metrics);
+                        return [3 /*break*/, 0];
+                    case 2: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.onfilecreated = function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // console.log(`onfilecreated(${file?.path})`);
+                this.push(file);
+                return [2 /*return*/];
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.onfilemodified = function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // console.log(`onfilemodified(${file?.path})`)
+                this.push(file);
+                return [2 /*return*/];
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.onfiledeleted = function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // console.log(`onfiledeleted(${file?.path})`)
+                this.push(file);
+                return [2 /*return*/];
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.onfilerenamed = function (file, oldPath) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // console.log(`onfilerenamed(${file?.path})`)
+                this.push(file);
+                this.push(oldPath);
+                return [2 /*return*/];
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.getFileType = function (file) {
+        var _a;
+        if (((_a = file.extension) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "md") {
+            return FileType.Note;
+        }
+        else {
+            return FileType.Attachment;
+        }
+    };
+    VaultMetricsCollector.prototype.collect = function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            var metadata;
+            return __generator(this, function (_a) {
+                try {
+                    metadata = this.metadataCache.getFileCache(file);
+                }
+                catch (e) {
+                    // getFileCache indicates that it should return either an instance
+                    // of CachedMetadata or null.  The conditions under which a null 
+                    // is returned are unspecified.  Empirically, if the file does not
+                    // exist, e.g. it's been deleted or renamed then getFileCache will 
+                    // throw an exception instead of returning null.
+                    metadata = null;
+                }
+                if (metadata == null) {
+                    return [2 /*return*/, Promise.resolve(null)];
+                }
+                switch (this.getFileType(file)) {
+                    case FileType.Note:
+                        return [2 /*return*/, new NoteMetricsCollector(this.vault).collect(file, metadata)];
+                    case FileType.Attachment:
+                        return [2 /*return*/, new FileMetricsCollector().collect(file, metadata)];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    VaultMetricsCollector.prototype.update = function (fileOrPath, metrics) {
+        var _a, _b;
+        var key = (fileOrPath instanceof obsidian.TFile) ? fileOrPath.path : fileOrPath;
+        // Remove the existing values for the passed file if present, update the
+        // raw values, then add the values for the passed file to the totals.
+        (_a = this.vaultMetrics) === null || _a === void 0 ? void 0 : _a.dec(this.data.get(key));
+        if (metrics == null) {
+            this.data.delete(key);
+        }
+        else {
+            this.data.set(key, metrics);
+        }
+        (_b = this.vaultMetrics) === null || _b === void 0 ? void 0 : _b.inc(metrics);
+    };
+    return VaultMetricsCollector;
+}());
+var NoteMetricsCollector = /** @class */ (function () {
+    function NoteMetricsCollector(vault) {
+        this.vault = vault;
+    }
+    NoteMetricsCollector.prototype.collect = function (file, metadata) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function () {
+            var metrics, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        metrics = new VaultMetrics();
+                        metrics.files = 1;
+                        metrics.notes = 1;
+                        metrics.attachments = 0;
+                        metrics.size = (_a = file.stat) === null || _a === void 0 ? void 0 : _a.size;
+                        metrics.links = ((_b = metadata === null || metadata === void 0 ? void 0 : metadata.links) === null || _b === void 0 ? void 0 : _b.length) || 0;
+                        metrics.words = 0;
+                        _c = metrics;
+                        return [4 /*yield*/, this.vault.cachedRead(file).then(function (content) {
+                                var _a;
+                                return (_a = metadata.sections) === null || _a === void 0 ? void 0 : _a.map(function (section) {
+                                    var _a, _b, _c, _d;
+                                    var sectionType = section.type;
+                                    var startOffset = (_b = (_a = section.position) === null || _a === void 0 ? void 0 : _a.start) === null || _b === void 0 ? void 0 : _b.offset;
+                                    var endOffset = (_d = (_c = section.position) === null || _c === void 0 ? void 0 : _c.end) === null || _d === void 0 ? void 0 : _d.offset;
+                                    var tokenizer = NoteMetricsCollector.TOKENIZERS.get(sectionType);
+                                    if (!tokenizer) {
+                                        console.log("".concat(file.path, ": no tokenizer, section.type=").concat(section.type));
+                                        return 0;
+                                    }
+                                    else {
+                                        var tokens = tokenizer.tokenize(content.substring(startOffset, endOffset));
+                                        return tokens.length;
+                                    }
+                                }).reduce(function (a, b) { return a + b; }, 0);
+                            }).catch(function (e) {
+                                console.log("".concat(file.path, " ").concat(e));
+                                return 0;
+                            })];
+                    case 1:
+                        _c.words = _d.sent();
+                        return [2 /*return*/, metrics];
+                }
+            });
+        });
+    };
+    NoteMetricsCollector.TOKENIZERS = new Map([
+        ["paragraph", MARKDOWN_TOKENIZER],
+        ["heading", MARKDOWN_TOKENIZER],
+        ["list", MARKDOWN_TOKENIZER],
+        ["table", UNIT_TOKENIZER],
+        ["yaml", UNIT_TOKENIZER],
+        ["code", UNIT_TOKENIZER],
+        ["blockquote", MARKDOWN_TOKENIZER],
+        ["math", UNIT_TOKENIZER],
+        ["thematicBreak", UNIT_TOKENIZER],
+        ["html", UNIT_TOKENIZER],
+        ["text", UNIT_TOKENIZER],
+        ["element", UNIT_TOKENIZER],
+        ["footnoteDefinition", UNIT_TOKENIZER],
+        ["definition", UNIT_TOKENIZER],
+        ["callout", MARKDOWN_TOKENIZER],
+    ]);
+    return NoteMetricsCollector;
+}());
+var FileMetricsCollector = /** @class */ (function () {
+    function FileMetricsCollector() {
+    }
+    FileMetricsCollector.prototype.collect = function (file, metadata) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var metrics;
+            return __generator(this, function (_b) {
+                metrics = new VaultMetrics();
+                metrics.files = 1;
+                metrics.notes = 0;
+                metrics.attachments = 1;
+                metrics.size = (_a = file.stat) === null || _a === void 0 ? void 0 : _a.size;
+                metrics.links = 0;
+                metrics.words = 0;
+                return [2 /*return*/, metrics];
+            });
+        });
+    };
+    return FileMetricsCollector;
+}());
+
+var StatisticsPluginSettingTab = /** @class */ (function (_super) {
+    __extends(StatisticsPluginSettingTab, _super);
+    function StatisticsPluginSettingTab(app, plugin) {
+        var _this = _super.call(this, app, plugin) || this;
+        _this.plugin = plugin;
+        return _this;
+    }
+    StatisticsPluginSettingTab.prototype.display = function () {
+        var _this = this;
+        var containerEl = this.containerEl;
+        containerEl.empty();
+        new obsidian.Setting(containerEl)
+            .setName("Show individual items")
+            .setDesc("Whether to show multiple items at once or cycle them with a click")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.displayIndividualItems)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.displayIndividualItems = value;
+                            this.display();
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        if (!this.plugin.settings.displayIndividualItems) {
+            return;
+        }
+        new obsidian.Setting(containerEl)
+            .setName("Show notes")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showNotes)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showNotes = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        new obsidian.Setting(containerEl)
+            .setName("Show attachments")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showAttachments)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showAttachments = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        new obsidian.Setting(containerEl)
+            .setName("Show files")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showFiles)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showFiles = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        new obsidian.Setting(containerEl)
+            .setName("Show links")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showLinks)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showLinks = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        new obsidian.Setting(containerEl)
+            .setName("Show words")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showWords)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showWords = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+        new obsidian.Setting(containerEl)
+            .setName("Show size")
+            .addToggle(function (value) {
+            value
+                .setValue(_this.plugin.settings.showSize)
+                .onChange(function (value) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.plugin.settings.showSize = value;
+                            return [4 /*yield*/, this.plugin.saveSettings()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+    };
+    return StatisticsPluginSettingTab;
+}(obsidian.PluginSettingTab));
+
+var DEFAULT_SETTINGS = {
+    displayIndividualItems: false,
+    showNotes: false,
+    showAttachments: false,
+    showFiles: false,
+    showLinks: false,
+    showWords: false,
+    showSize: false,
+};
 var StatisticsPlugin = /** @class */ (function (_super) {
     __extends(StatisticsPlugin, _super);
     function StatisticsPlugin() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.statusBarItem = null;
-        _this.update = obsidian.debounce(function () { _this.statusBarItem.update(); }, 100, true);
         return _this;
     }
     StatisticsPlugin.prototype.onload = function () {
-        console.log('Loading vault-statistics Plugin');
-        this.statusBarItem = new StatisticsStatusBarItem(this.app, this.addStatusBarItem());
-        this.registerEvent(this.app.metadataCache.on('resolved', this.update));
-        this.update();
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log('Loading vault-statistics Plugin');
+                        return [4 /*yield*/, this.loadSettings()];
+                    case 1:
+                        _a.sent();
+                        this.vaultMetrics = new VaultMetrics();
+                        this.vaultMetricsCollector = new VaultMetricsCollector(this).
+                            setVault(this.app.vault).
+                            setMetadataCache(this.app.metadataCache).
+                            setVaultMetrics(this.vaultMetrics).
+                            start();
+                        this.statusBarItem = new StatisticsStatusBarItem(this, this.addStatusBarItem()).
+                            setVaultMetrics(this.vaultMetrics);
+                        this.addSettingTab(new StatisticsPluginSettingTab(this.app, this));
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    StatisticsPlugin.prototype.loadSettings = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        _a = this;
+                        _c = (_b = Object).assign;
+                        _d = [{}, DEFAULT_SETTINGS];
+                        return [4 /*yield*/, this.loadData()];
+                    case 1:
+                        _a.settings = _c.apply(_b, _d.concat([_e.sent()]));
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    StatisticsPlugin.prototype.saveSettings = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.saveData(this.settings)];
+                    case 1:
+                        _a.sent();
+                        this.statusBarItem.refresh();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return StatisticsPlugin;
 }(obsidian.Plugin));
+/**
+ * {@link StatisticView} is responsible for maintaining the DOM representation
+ * of a given statistic.
+ */
+var StatisticView = /** @class */ (function () {
+    /**
+     * Constructor.
+     *
+     * @param containerEl The parent element for the view.
+     */
+    function StatisticView(containerEl) {
+        this.containerEl = containerEl.createSpan({ cls: ["obsidian-vault-statistics--item"] });
+        this.setActive(false);
+    }
+    /**
+     * Sets the name of the statistic.
+     */
+    StatisticView.prototype.setStatisticName = function (name) {
+        this.containerEl.addClass("obsidian-vault-statistics--item-".concat(name));
+        return this;
+    };
+    /**
+     * Sets the formatter to use to produce the content of the view.
+     */
+    StatisticView.prototype.setFormatter = function (formatter) {
+        this.formatter = formatter;
+        return this;
+    };
+    /**
+     * Updates the view with the desired active status.
+     *
+     * Active views have the CSS class `obsidian-vault-statistics--item-active`
+     * applied, inactive views have the CSS class
+     * `obsidian-vault-statistics--item-inactive` applied. These classes are
+     * mutually exclusive.
+     */
+    StatisticView.prototype.setActive = function (isActive) {
+        this.containerEl.removeClass("obsidian-vault-statistics--item--active");
+        this.containerEl.removeClass("obsidian-vault-statistics--item--inactive");
+        if (isActive) {
+            this.containerEl.addClass("obsidian-vault-statistics--item--active");
+        }
+        else {
+            this.containerEl.addClass("obsidian-vault-statistics--item--inactive");
+        }
+        return this;
+    };
+    /**
+     * Refreshes the content of the view with content from the passed {@link
+     * Statistics}.
+     */
+    StatisticView.prototype.refresh = function (s) {
+        this.containerEl.setText(this.formatter(s));
+    };
+    /**
+     * Returns the text content of the view.
+     */
+    StatisticView.prototype.getText = function () {
+        return this.containerEl.getText();
+    };
+    return StatisticView;
+}());
 var StatisticsStatusBarItem = /** @class */ (function () {
-    function StatisticsStatusBarItem(app, statusBarItem) {
+    function StatisticsStatusBarItem(owner, statusBarItem) {
         var _this = this;
-        // raw stats
-        this.stats = { notes: 0, links: 0, files: 0, attachments: 0 };
-        // keys of `stats` in the order to cycle through them when the status bar item is clicked.
-        this.displayedStats = ["notes", "links", "files", "attachments"];
         // index of the currently displayed stat.
-        this.displayedStatIndex = 0;
-        this.app = app;
+        this.displayedStatisticIndex = 0;
+        this.statisticViews = [];
+        this.refreshSoon = obsidian.debounce(function () { _this.refresh(); }, 2000, false);
+        this.owner = owner;
         this.statusBarItem = statusBarItem;
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("notes").
+            setFormatter(function (s) { return new DecimalUnitFormatter("notes").format(s.notes); }));
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("attachments").
+            setFormatter(function (s) { return new DecimalUnitFormatter("attachments").format(s.attachments); }));
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("files").
+            setFormatter(function (s) { return new DecimalUnitFormatter("files").format(s.files); }));
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("links").
+            setFormatter(function (s) { return new DecimalUnitFormatter("links").format(s.links); }));
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("words").
+            setFormatter(function (s) { return new DecimalUnitFormatter("words").format(s.words); }));
+        this.statisticViews.push(new StatisticView(this.statusBarItem).
+            setStatisticName("size").
+            setFormatter(function (s) { return new BytesFormatter().format(s.size); }));
         this.statusBarItem.onClickEvent(function () { _this.onclick(); });
     }
+    StatisticsStatusBarItem.prototype.setVaultMetrics = function (vaultMetrics) {
+        var _a;
+        this.vaultMetrics = vaultMetrics;
+        this.owner.registerEvent((_a = this.vaultMetrics) === null || _a === void 0 ? void 0 : _a.on("updated", this.refreshSoon));
+        this.refreshSoon();
+        return this;
+    };
     StatisticsStatusBarItem.prototype.refresh = function () {
-        var title = [];
-        title.push(this.stats.notes + " notes");
-        title.push(this.stats.attachments + " attachments");
-        title.push(this.stats.files + " files");
-        title.push(this.stats.links + " links");
-        this.statusBarItem.innerText = this.stats[this.displayedStats[this.displayedStatIndex]] + " " + this.displayedStats[this.displayedStatIndex];
-        this.statusBarItem.title = title.join('\n');
+        var _this = this;
+        if (this.owner.settings.displayIndividualItems) {
+            this.statisticViews[0].setActive(this.owner.settings.showNotes).refresh(this.vaultMetrics);
+            this.statisticViews[1].setActive(this.owner.settings.showAttachments).refresh(this.vaultMetrics);
+            this.statisticViews[2].setActive(this.owner.settings.showFiles).refresh(this.vaultMetrics);
+            this.statisticViews[3].setActive(this.owner.settings.showLinks).refresh(this.vaultMetrics);
+            this.statisticViews[4].setActive(this.owner.settings.showWords).refresh(this.vaultMetrics);
+            this.statisticViews[5].setActive(this.owner.settings.showSize).refresh(this.vaultMetrics);
+        }
+        else {
+            this.statisticViews.forEach(function (view, i) {
+                view.setActive(_this.displayedStatisticIndex == i).refresh(_this.vaultMetrics);
+            });
+        }
+        this.statusBarItem.title = this.statisticViews.map(function (view) { return view.getText(); }).join("\n");
     };
     StatisticsStatusBarItem.prototype.onclick = function () {
-        this.displayedStatIndex = (this.displayedStatIndex + 1) % this.displayedStats.length;
-        this.refresh();
-    };
-    StatisticsStatusBarItem.prototype.update = function () {
-        var _this = this;
-        var stats = { notes: 0, links: 0, files: 0, attachments: 0 };
-        this.app.vault.getFiles().forEach(function (f) {
-            var _a, _b;
-            stats.files += 1;
-            if (f.extension === 'md') {
-                stats.notes += 1;
-            }
-            else {
-                stats.attachments += 1;
-            }
-            stats.links += ((_b = (_a = _this.app.metadataCache.getCache(f.path)) === null || _a === void 0 ? void 0 : _a.links) === null || _b === void 0 ? void 0 : _b.length) || 0;
-        });
-        this.stats = stats;
+        if (!this.owner.settings.displayIndividualItems) {
+            this.displayedStatisticIndex = (this.displayedStatisticIndex + 1) % this.statisticViews.length;
+        }
         this.refresh();
     };
     return StatisticsStatusBarItem;
 }());
 
 module.exports = StatisticsPlugin;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWFpbi5qcyIsInNvdXJjZXMiOlsibm9kZV9tb2R1bGVzL3RzbGliL3RzbGliLmVzNi5qcyIsIm1haW4udHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyohICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqXHJcbkNvcHlyaWdodCAoYykgTWljcm9zb2Z0IENvcnBvcmF0aW9uLlxyXG5cclxuUGVybWlzc2lvbiB0byB1c2UsIGNvcHksIG1vZGlmeSwgYW5kL29yIGRpc3RyaWJ1dGUgdGhpcyBzb2Z0d2FyZSBmb3IgYW55XHJcbnB1cnBvc2Ugd2l0aCBvciB3aXRob3V0IGZlZSBpcyBoZXJlYnkgZ3JhbnRlZC5cclxuXHJcblRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCBcIkFTIElTXCIgQU5EIFRIRSBBVVRIT1IgRElTQ0xBSU1TIEFMTCBXQVJSQU5USUVTIFdJVEhcclxuUkVHQVJEIFRPIFRISVMgU09GVFdBUkUgSU5DTFVESU5HIEFMTCBJTVBMSUVEIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZXHJcbkFORCBGSVRORVNTLiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVUSE9SIEJFIExJQUJMRSBGT1IgQU5ZIFNQRUNJQUwsIERJUkVDVCxcclxuSU5ESVJFQ1QsIE9SIENPTlNFUVVFTlRJQUwgREFNQUdFUyBPUiBBTlkgREFNQUdFUyBXSEFUU09FVkVSIFJFU1VMVElORyBGUk9NXHJcbkxPU1MgT0YgVVNFLCBEQVRBIE9SIFBST0ZJVFMsIFdIRVRIRVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBORUdMSUdFTkNFIE9SXHJcbk9USEVSIFRPUlRJT1VTIEFDVElPTiwgQVJJU0lORyBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBVU0UgT1JcclxuUEVSRk9STUFOQ0UgT0YgVEhJUyBTT0ZUV0FSRS5cclxuKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiogKi9cclxuLyogZ2xvYmFsIFJlZmxlY3QsIFByb21pc2UgKi9cclxuXHJcbnZhciBleHRlbmRTdGF0aWNzID0gZnVuY3Rpb24oZCwgYikge1xyXG4gICAgZXh0ZW5kU3RhdGljcyA9IE9iamVjdC5zZXRQcm90b3R5cGVPZiB8fFxyXG4gICAgICAgICh7IF9fcHJvdG9fXzogW10gfSBpbnN0YW5jZW9mIEFycmF5ICYmIGZ1bmN0aW9uIChkLCBiKSB7IGQuX19wcm90b19fID0gYjsgfSkgfHxcclxuICAgICAgICBmdW5jdGlvbiAoZCwgYikgeyBmb3IgKHZhciBwIGluIGIpIGlmIChPYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LmNhbGwoYiwgcCkpIGRbcF0gPSBiW3BdOyB9O1xyXG4gICAgcmV0dXJuIGV4dGVuZFN0YXRpY3MoZCwgYik7XHJcbn07XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19leHRlbmRzKGQsIGIpIHtcclxuICAgIGlmICh0eXBlb2YgYiAhPT0gXCJmdW5jdGlvblwiICYmIGIgIT09IG51bGwpXHJcbiAgICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcihcIkNsYXNzIGV4dGVuZHMgdmFsdWUgXCIgKyBTdHJpbmcoYikgKyBcIiBpcyBub3QgYSBjb25zdHJ1Y3RvciBvciBudWxsXCIpO1xyXG4gICAgZXh0ZW5kU3RhdGljcyhkLCBiKTtcclxuICAgIGZ1bmN0aW9uIF9fKCkgeyB0aGlzLmNvbnN0cnVjdG9yID0gZDsgfVxyXG4gICAgZC5wcm90b3R5cGUgPSBiID09PSBudWxsID8gT2JqZWN0LmNyZWF0ZShiKSA6IChfXy5wcm90b3R5cGUgPSBiLnByb3RvdHlwZSwgbmV3IF9fKCkpO1xyXG59XHJcblxyXG5leHBvcnQgdmFyIF9fYXNzaWduID0gZnVuY3Rpb24oKSB7XHJcbiAgICBfX2Fzc2lnbiA9IE9iamVjdC5hc3NpZ24gfHwgZnVuY3Rpb24gX19hc3NpZ24odCkge1xyXG4gICAgICAgIGZvciAodmFyIHMsIGkgPSAxLCBuID0gYXJndW1lbnRzLmxlbmd0aDsgaSA8IG47IGkrKykge1xyXG4gICAgICAgICAgICBzID0gYXJndW1lbnRzW2ldO1xyXG4gICAgICAgICAgICBmb3IgKHZhciBwIGluIHMpIGlmIChPYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LmNhbGwocywgcCkpIHRbcF0gPSBzW3BdO1xyXG4gICAgICAgIH1cclxuICAgICAgICByZXR1cm4gdDtcclxuICAgIH1cclxuICAgIHJldHVybiBfX2Fzc2lnbi5hcHBseSh0aGlzLCBhcmd1bWVudHMpO1xyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19yZXN0KHMsIGUpIHtcclxuICAgIHZhciB0ID0ge307XHJcbiAgICBmb3IgKHZhciBwIGluIHMpIGlmIChPYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LmNhbGwocywgcCkgJiYgZS5pbmRleE9mKHApIDwgMClcclxuICAgICAgICB0W3BdID0gc1twXTtcclxuICAgIGlmIChzICE9IG51bGwgJiYgdHlwZW9mIE9iamVjdC5nZXRPd25Qcm9wZXJ0eVN5bWJvbHMgPT09IFwiZnVuY3Rpb25cIilcclxuICAgICAgICBmb3IgKHZhciBpID0gMCwgcCA9IE9iamVjdC5nZXRPd25Qcm9wZXJ0eVN5bWJvbHMocyk7IGkgPCBwLmxlbmd0aDsgaSsrKSB7XHJcbiAgICAgICAgICAgIGlmIChlLmluZGV4T2YocFtpXSkgPCAwICYmIE9iamVjdC5wcm90b3R5cGUucHJvcGVydHlJc0VudW1lcmFibGUuY2FsbChzLCBwW2ldKSlcclxuICAgICAgICAgICAgICAgIHRbcFtpXV0gPSBzW3BbaV1dO1xyXG4gICAgICAgIH1cclxuICAgIHJldHVybiB0O1xyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19kZWNvcmF0ZShkZWNvcmF0b3JzLCB0YXJnZXQsIGtleSwgZGVzYykge1xyXG4gICAgdmFyIGMgPSBhcmd1bWVudHMubGVuZ3RoLCByID0gYyA8IDMgPyB0YXJnZXQgOiBkZXNjID09PSBudWxsID8gZGVzYyA9IE9iamVjdC5nZXRPd25Qcm9wZXJ0eURlc2NyaXB0b3IodGFyZ2V0LCBrZXkpIDogZGVzYywgZDtcclxuICAgIGlmICh0eXBlb2YgUmVmbGVjdCA9PT0gXCJvYmplY3RcIiAmJiB0eXBlb2YgUmVmbGVjdC5kZWNvcmF0ZSA9PT0gXCJmdW5jdGlvblwiKSByID0gUmVmbGVjdC5kZWNvcmF0ZShkZWNvcmF0b3JzLCB0YXJnZXQsIGtleSwgZGVzYyk7XHJcbiAgICBlbHNlIGZvciAodmFyIGkgPSBkZWNvcmF0b3JzLmxlbmd0aCAtIDE7IGkgPj0gMDsgaS0tKSBpZiAoZCA9IGRlY29yYXRvcnNbaV0pIHIgPSAoYyA8IDMgPyBkKHIpIDogYyA+IDMgPyBkKHRhcmdldCwga2V5LCByKSA6IGQodGFyZ2V0LCBrZXkpKSB8fCByO1xyXG4gICAgcmV0dXJuIGMgPiAzICYmIHIgJiYgT2JqZWN0LmRlZmluZVByb3BlcnR5KHRhcmdldCwga2V5LCByKSwgcjtcclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fcGFyYW0ocGFyYW1JbmRleCwgZGVjb3JhdG9yKSB7XHJcbiAgICByZXR1cm4gZnVuY3Rpb24gKHRhcmdldCwga2V5KSB7IGRlY29yYXRvcih0YXJnZXQsIGtleSwgcGFyYW1JbmRleCk7IH1cclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fbWV0YWRhdGEobWV0YWRhdGFLZXksIG1ldGFkYXRhVmFsdWUpIHtcclxuICAgIGlmICh0eXBlb2YgUmVmbGVjdCA9PT0gXCJvYmplY3RcIiAmJiB0eXBlb2YgUmVmbGVjdC5tZXRhZGF0YSA9PT0gXCJmdW5jdGlvblwiKSByZXR1cm4gUmVmbGVjdC5tZXRhZGF0YShtZXRhZGF0YUtleSwgbWV0YWRhdGFWYWx1ZSk7XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2F3YWl0ZXIodGhpc0FyZywgX2FyZ3VtZW50cywgUCwgZ2VuZXJhdG9yKSB7XHJcbiAgICBmdW5jdGlvbiBhZG9wdCh2YWx1ZSkgeyByZXR1cm4gdmFsdWUgaW5zdGFuY2VvZiBQID8gdmFsdWUgOiBuZXcgUChmdW5jdGlvbiAocmVzb2x2ZSkgeyByZXNvbHZlKHZhbHVlKTsgfSk7IH1cclxuICAgIHJldHVybiBuZXcgKFAgfHwgKFAgPSBQcm9taXNlKSkoZnVuY3Rpb24gKHJlc29sdmUsIHJlamVjdCkge1xyXG4gICAgICAgIGZ1bmN0aW9uIGZ1bGZpbGxlZCh2YWx1ZSkgeyB0cnkgeyBzdGVwKGdlbmVyYXRvci5uZXh0KHZhbHVlKSk7IH0gY2F0Y2ggKGUpIHsgcmVqZWN0KGUpOyB9IH1cclxuICAgICAgICBmdW5jdGlvbiByZWplY3RlZCh2YWx1ZSkgeyB0cnkgeyBzdGVwKGdlbmVyYXRvcltcInRocm93XCJdKHZhbHVlKSk7IH0gY2F0Y2ggKGUpIHsgcmVqZWN0KGUpOyB9IH1cclxuICAgICAgICBmdW5jdGlvbiBzdGVwKHJlc3VsdCkgeyByZXN1bHQuZG9uZSA/IHJlc29sdmUocmVzdWx0LnZhbHVlKSA6IGFkb3B0KHJlc3VsdC52YWx1ZSkudGhlbihmdWxmaWxsZWQsIHJlamVjdGVkKTsgfVxyXG4gICAgICAgIHN0ZXAoKGdlbmVyYXRvciA9IGdlbmVyYXRvci5hcHBseSh0aGlzQXJnLCBfYXJndW1lbnRzIHx8IFtdKSkubmV4dCgpKTtcclxuICAgIH0pO1xyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19nZW5lcmF0b3IodGhpc0FyZywgYm9keSkge1xyXG4gICAgdmFyIF8gPSB7IGxhYmVsOiAwLCBzZW50OiBmdW5jdGlvbigpIHsgaWYgKHRbMF0gJiAxKSB0aHJvdyB0WzFdOyByZXR1cm4gdFsxXTsgfSwgdHJ5czogW10sIG9wczogW10gfSwgZiwgeSwgdCwgZztcclxuICAgIHJldHVybiBnID0geyBuZXh0OiB2ZXJiKDApLCBcInRocm93XCI6IHZlcmIoMSksIFwicmV0dXJuXCI6IHZlcmIoMikgfSwgdHlwZW9mIFN5bWJvbCA9PT0gXCJmdW5jdGlvblwiICYmIChnW1N5bWJvbC5pdGVyYXRvcl0gPSBmdW5jdGlvbigpIHsgcmV0dXJuIHRoaXM7IH0pLCBnO1xyXG4gICAgZnVuY3Rpb24gdmVyYihuKSB7IHJldHVybiBmdW5jdGlvbiAodikgeyByZXR1cm4gc3RlcChbbiwgdl0pOyB9OyB9XHJcbiAgICBmdW5jdGlvbiBzdGVwKG9wKSB7XHJcbiAgICAgICAgaWYgKGYpIHRocm93IG5ldyBUeXBlRXJyb3IoXCJHZW5lcmF0b3IgaXMgYWxyZWFkeSBleGVjdXRpbmcuXCIpO1xyXG4gICAgICAgIHdoaWxlIChfKSB0cnkge1xyXG4gICAgICAgICAgICBpZiAoZiA9IDEsIHkgJiYgKHQgPSBvcFswXSAmIDIgPyB5W1wicmV0dXJuXCJdIDogb3BbMF0gPyB5W1widGhyb3dcIl0gfHwgKCh0ID0geVtcInJldHVyblwiXSkgJiYgdC5jYWxsKHkpLCAwKSA6IHkubmV4dCkgJiYgISh0ID0gdC5jYWxsKHksIG9wWzFdKSkuZG9uZSkgcmV0dXJuIHQ7XHJcbiAgICAgICAgICAgIGlmICh5ID0gMCwgdCkgb3AgPSBbb3BbMF0gJiAyLCB0LnZhbHVlXTtcclxuICAgICAgICAgICAgc3dpdGNoIChvcFswXSkge1xyXG4gICAgICAgICAgICAgICAgY2FzZSAwOiBjYXNlIDE6IHQgPSBvcDsgYnJlYWs7XHJcbiAgICAgICAgICAgICAgICBjYXNlIDQ6IF8ubGFiZWwrKzsgcmV0dXJuIHsgdmFsdWU6IG9wWzFdLCBkb25lOiBmYWxzZSB9O1xyXG4gICAgICAgICAgICAgICAgY2FzZSA1OiBfLmxhYmVsKys7IHkgPSBvcFsxXTsgb3AgPSBbMF07IGNvbnRpbnVlO1xyXG4gICAgICAgICAgICAgICAgY2FzZSA3OiBvcCA9IF8ub3BzLnBvcCgpOyBfLnRyeXMucG9wKCk7IGNvbnRpbnVlO1xyXG4gICAgICAgICAgICAgICAgZGVmYXVsdDpcclxuICAgICAgICAgICAgICAgICAgICBpZiAoISh0ID0gXy50cnlzLCB0ID0gdC5sZW5ndGggPiAwICYmIHRbdC5sZW5ndGggLSAxXSkgJiYgKG9wWzBdID09PSA2IHx8IG9wWzBdID09PSAyKSkgeyBfID0gMDsgY29udGludWU7IH1cclxuICAgICAgICAgICAgICAgICAgICBpZiAob3BbMF0gPT09IDMgJiYgKCF0IHx8IChvcFsxXSA+IHRbMF0gJiYgb3BbMV0gPCB0WzNdKSkpIHsgXy5sYWJlbCA9IG9wWzFdOyBicmVhazsgfVxyXG4gICAgICAgICAgICAgICAgICAgIGlmIChvcFswXSA9PT0gNiAmJiBfLmxhYmVsIDwgdFsxXSkgeyBfLmxhYmVsID0gdFsxXTsgdCA9IG9wOyBicmVhazsgfVxyXG4gICAgICAgICAgICAgICAgICAgIGlmICh0ICYmIF8ubGFiZWwgPCB0WzJdKSB7IF8ubGFiZWwgPSB0WzJdOyBfLm9wcy5wdXNoKG9wKTsgYnJlYWs7IH1cclxuICAgICAgICAgICAgICAgICAgICBpZiAodFsyXSkgXy5vcHMucG9wKCk7XHJcbiAgICAgICAgICAgICAgICAgICAgXy50cnlzLnBvcCgpOyBjb250aW51ZTtcclxuICAgICAgICAgICAgfVxyXG4gICAgICAgICAgICBvcCA9IGJvZHkuY2FsbCh0aGlzQXJnLCBfKTtcclxuICAgICAgICB9IGNhdGNoIChlKSB7IG9wID0gWzYsIGVdOyB5ID0gMDsgfSBmaW5hbGx5IHsgZiA9IHQgPSAwOyB9XHJcbiAgICAgICAgaWYgKG9wWzBdICYgNSkgdGhyb3cgb3BbMV07IHJldHVybiB7IHZhbHVlOiBvcFswXSA/IG9wWzFdIDogdm9pZCAwLCBkb25lOiB0cnVlIH07XHJcbiAgICB9XHJcbn1cclxuXHJcbmV4cG9ydCB2YXIgX19jcmVhdGVCaW5kaW5nID0gT2JqZWN0LmNyZWF0ZSA/IChmdW5jdGlvbihvLCBtLCBrLCBrMikge1xyXG4gICAgaWYgKGsyID09PSB1bmRlZmluZWQpIGsyID0gaztcclxuICAgIE9iamVjdC5kZWZpbmVQcm9wZXJ0eShvLCBrMiwgeyBlbnVtZXJhYmxlOiB0cnVlLCBnZXQ6IGZ1bmN0aW9uKCkgeyByZXR1cm4gbVtrXTsgfSB9KTtcclxufSkgOiAoZnVuY3Rpb24obywgbSwgaywgazIpIHtcclxuICAgIGlmIChrMiA9PT0gdW5kZWZpbmVkKSBrMiA9IGs7XHJcbiAgICBvW2syXSA9IG1ba107XHJcbn0pO1xyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fZXhwb3J0U3RhcihtLCBvKSB7XHJcbiAgICBmb3IgKHZhciBwIGluIG0pIGlmIChwICE9PSBcImRlZmF1bHRcIiAmJiAhT2JqZWN0LnByb3RvdHlwZS5oYXNPd25Qcm9wZXJ0eS5jYWxsKG8sIHApKSBfX2NyZWF0ZUJpbmRpbmcobywgbSwgcCk7XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX3ZhbHVlcyhvKSB7XHJcbiAgICB2YXIgcyA9IHR5cGVvZiBTeW1ib2wgPT09IFwiZnVuY3Rpb25cIiAmJiBTeW1ib2wuaXRlcmF0b3IsIG0gPSBzICYmIG9bc10sIGkgPSAwO1xyXG4gICAgaWYgKG0pIHJldHVybiBtLmNhbGwobyk7XHJcbiAgICBpZiAobyAmJiB0eXBlb2Ygby5sZW5ndGggPT09IFwibnVtYmVyXCIpIHJldHVybiB7XHJcbiAgICAgICAgbmV4dDogZnVuY3Rpb24gKCkge1xyXG4gICAgICAgICAgICBpZiAobyAmJiBpID49IG8ubGVuZ3RoKSBvID0gdm9pZCAwO1xyXG4gICAgICAgICAgICByZXR1cm4geyB2YWx1ZTogbyAmJiBvW2krK10sIGRvbmU6ICFvIH07XHJcbiAgICAgICAgfVxyXG4gICAgfTtcclxuICAgIHRocm93IG5ldyBUeXBlRXJyb3IocyA/IFwiT2JqZWN0IGlzIG5vdCBpdGVyYWJsZS5cIiA6IFwiU3ltYm9sLml0ZXJhdG9yIGlzIG5vdCBkZWZpbmVkLlwiKTtcclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fcmVhZChvLCBuKSB7XHJcbiAgICB2YXIgbSA9IHR5cGVvZiBTeW1ib2wgPT09IFwiZnVuY3Rpb25cIiAmJiBvW1N5bWJvbC5pdGVyYXRvcl07XHJcbiAgICBpZiAoIW0pIHJldHVybiBvO1xyXG4gICAgdmFyIGkgPSBtLmNhbGwobyksIHIsIGFyID0gW10sIGU7XHJcbiAgICB0cnkge1xyXG4gICAgICAgIHdoaWxlICgobiA9PT0gdm9pZCAwIHx8IG4tLSA+IDApICYmICEociA9IGkubmV4dCgpKS5kb25lKSBhci5wdXNoKHIudmFsdWUpO1xyXG4gICAgfVxyXG4gICAgY2F0Y2ggKGVycm9yKSB7IGUgPSB7IGVycm9yOiBlcnJvciB9OyB9XHJcbiAgICBmaW5hbGx5IHtcclxuICAgICAgICB0cnkge1xyXG4gICAgICAgICAgICBpZiAociAmJiAhci5kb25lICYmIChtID0gaVtcInJldHVyblwiXSkpIG0uY2FsbChpKTtcclxuICAgICAgICB9XHJcbiAgICAgICAgZmluYWxseSB7IGlmIChlKSB0aHJvdyBlLmVycm9yOyB9XHJcbiAgICB9XHJcbiAgICByZXR1cm4gYXI7XHJcbn1cclxuXHJcbi8qKiBAZGVwcmVjYXRlZCAqL1xyXG5leHBvcnQgZnVuY3Rpb24gX19zcHJlYWQoKSB7XHJcbiAgICBmb3IgKHZhciBhciA9IFtdLCBpID0gMDsgaSA8IGFyZ3VtZW50cy5sZW5ndGg7IGkrKylcclxuICAgICAgICBhciA9IGFyLmNvbmNhdChfX3JlYWQoYXJndW1lbnRzW2ldKSk7XHJcbiAgICByZXR1cm4gYXI7XHJcbn1cclxuXHJcbi8qKiBAZGVwcmVjYXRlZCAqL1xyXG5leHBvcnQgZnVuY3Rpb24gX19zcHJlYWRBcnJheXMoKSB7XHJcbiAgICBmb3IgKHZhciBzID0gMCwgaSA9IDAsIGlsID0gYXJndW1lbnRzLmxlbmd0aDsgaSA8IGlsOyBpKyspIHMgKz0gYXJndW1lbnRzW2ldLmxlbmd0aDtcclxuICAgIGZvciAodmFyIHIgPSBBcnJheShzKSwgayA9IDAsIGkgPSAwOyBpIDwgaWw7IGkrKylcclxuICAgICAgICBmb3IgKHZhciBhID0gYXJndW1lbnRzW2ldLCBqID0gMCwgamwgPSBhLmxlbmd0aDsgaiA8IGpsOyBqKyssIGsrKylcclxuICAgICAgICAgICAgcltrXSA9IGFbal07XHJcbiAgICByZXR1cm4gcjtcclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fc3ByZWFkQXJyYXkodG8sIGZyb20pIHtcclxuICAgIGZvciAodmFyIGkgPSAwLCBpbCA9IGZyb20ubGVuZ3RoLCBqID0gdG8ubGVuZ3RoOyBpIDwgaWw7IGkrKywgaisrKVxyXG4gICAgICAgIHRvW2pdID0gZnJvbVtpXTtcclxuICAgIHJldHVybiB0bztcclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIF9fYXdhaXQodikge1xyXG4gICAgcmV0dXJuIHRoaXMgaW5zdGFuY2VvZiBfX2F3YWl0ID8gKHRoaXMudiA9IHYsIHRoaXMpIDogbmV3IF9fYXdhaXQodik7XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2FzeW5jR2VuZXJhdG9yKHRoaXNBcmcsIF9hcmd1bWVudHMsIGdlbmVyYXRvcikge1xyXG4gICAgaWYgKCFTeW1ib2wuYXN5bmNJdGVyYXRvcikgdGhyb3cgbmV3IFR5cGVFcnJvcihcIlN5bWJvbC5hc3luY0l0ZXJhdG9yIGlzIG5vdCBkZWZpbmVkLlwiKTtcclxuICAgIHZhciBnID0gZ2VuZXJhdG9yLmFwcGx5KHRoaXNBcmcsIF9hcmd1bWVudHMgfHwgW10pLCBpLCBxID0gW107XHJcbiAgICByZXR1cm4gaSA9IHt9LCB2ZXJiKFwibmV4dFwiKSwgdmVyYihcInRocm93XCIpLCB2ZXJiKFwicmV0dXJuXCIpLCBpW1N5bWJvbC5hc3luY0l0ZXJhdG9yXSA9IGZ1bmN0aW9uICgpIHsgcmV0dXJuIHRoaXM7IH0sIGk7XHJcbiAgICBmdW5jdGlvbiB2ZXJiKG4pIHsgaWYgKGdbbl0pIGlbbl0gPSBmdW5jdGlvbiAodikgeyByZXR1cm4gbmV3IFByb21pc2UoZnVuY3Rpb24gKGEsIGIpIHsgcS5wdXNoKFtuLCB2LCBhLCBiXSkgPiAxIHx8IHJlc3VtZShuLCB2KTsgfSk7IH07IH1cclxuICAgIGZ1bmN0aW9uIHJlc3VtZShuLCB2KSB7IHRyeSB7IHN0ZXAoZ1tuXSh2KSk7IH0gY2F0Y2ggKGUpIHsgc2V0dGxlKHFbMF1bM10sIGUpOyB9IH1cclxuICAgIGZ1bmN0aW9uIHN0ZXAocikgeyByLnZhbHVlIGluc3RhbmNlb2YgX19hd2FpdCA/IFByb21pc2UucmVzb2x2ZShyLnZhbHVlLnYpLnRoZW4oZnVsZmlsbCwgcmVqZWN0KSA6IHNldHRsZShxWzBdWzJdLCByKTsgfVxyXG4gICAgZnVuY3Rpb24gZnVsZmlsbCh2YWx1ZSkgeyByZXN1bWUoXCJuZXh0XCIsIHZhbHVlKTsgfVxyXG4gICAgZnVuY3Rpb24gcmVqZWN0KHZhbHVlKSB7IHJlc3VtZShcInRocm93XCIsIHZhbHVlKTsgfVxyXG4gICAgZnVuY3Rpb24gc2V0dGxlKGYsIHYpIHsgaWYgKGYodiksIHEuc2hpZnQoKSwgcS5sZW5ndGgpIHJlc3VtZShxWzBdWzBdLCBxWzBdWzFdKTsgfVxyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19hc3luY0RlbGVnYXRvcihvKSB7XHJcbiAgICB2YXIgaSwgcDtcclxuICAgIHJldHVybiBpID0ge30sIHZlcmIoXCJuZXh0XCIpLCB2ZXJiKFwidGhyb3dcIiwgZnVuY3Rpb24gKGUpIHsgdGhyb3cgZTsgfSksIHZlcmIoXCJyZXR1cm5cIiksIGlbU3ltYm9sLml0ZXJhdG9yXSA9IGZ1bmN0aW9uICgpIHsgcmV0dXJuIHRoaXM7IH0sIGk7XHJcbiAgICBmdW5jdGlvbiB2ZXJiKG4sIGYpIHsgaVtuXSA9IG9bbl0gPyBmdW5jdGlvbiAodikgeyByZXR1cm4gKHAgPSAhcCkgPyB7IHZhbHVlOiBfX2F3YWl0KG9bbl0odikpLCBkb25lOiBuID09PSBcInJldHVyblwiIH0gOiBmID8gZih2KSA6IHY7IH0gOiBmOyB9XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2FzeW5jVmFsdWVzKG8pIHtcclxuICAgIGlmICghU3ltYm9sLmFzeW5jSXRlcmF0b3IpIHRocm93IG5ldyBUeXBlRXJyb3IoXCJTeW1ib2wuYXN5bmNJdGVyYXRvciBpcyBub3QgZGVmaW5lZC5cIik7XHJcbiAgICB2YXIgbSA9IG9bU3ltYm9sLmFzeW5jSXRlcmF0b3JdLCBpO1xyXG4gICAgcmV0dXJuIG0gPyBtLmNhbGwobykgOiAobyA9IHR5cGVvZiBfX3ZhbHVlcyA9PT0gXCJmdW5jdGlvblwiID8gX192YWx1ZXMobykgOiBvW1N5bWJvbC5pdGVyYXRvcl0oKSwgaSA9IHt9LCB2ZXJiKFwibmV4dFwiKSwgdmVyYihcInRocm93XCIpLCB2ZXJiKFwicmV0dXJuXCIpLCBpW1N5bWJvbC5hc3luY0l0ZXJhdG9yXSA9IGZ1bmN0aW9uICgpIHsgcmV0dXJuIHRoaXM7IH0sIGkpO1xyXG4gICAgZnVuY3Rpb24gdmVyYihuKSB7IGlbbl0gPSBvW25dICYmIGZ1bmN0aW9uICh2KSB7IHJldHVybiBuZXcgUHJvbWlzZShmdW5jdGlvbiAocmVzb2x2ZSwgcmVqZWN0KSB7IHYgPSBvW25dKHYpLCBzZXR0bGUocmVzb2x2ZSwgcmVqZWN0LCB2LmRvbmUsIHYudmFsdWUpOyB9KTsgfTsgfVxyXG4gICAgZnVuY3Rpb24gc2V0dGxlKHJlc29sdmUsIHJlamVjdCwgZCwgdikgeyBQcm9taXNlLnJlc29sdmUodikudGhlbihmdW5jdGlvbih2KSB7IHJlc29sdmUoeyB2YWx1ZTogdiwgZG9uZTogZCB9KTsgfSwgcmVqZWN0KTsgfVxyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19tYWtlVGVtcGxhdGVPYmplY3QoY29va2VkLCByYXcpIHtcclxuICAgIGlmIChPYmplY3QuZGVmaW5lUHJvcGVydHkpIHsgT2JqZWN0LmRlZmluZVByb3BlcnR5KGNvb2tlZCwgXCJyYXdcIiwgeyB2YWx1ZTogcmF3IH0pOyB9IGVsc2UgeyBjb29rZWQucmF3ID0gcmF3OyB9XHJcbiAgICByZXR1cm4gY29va2VkO1xyXG59O1xyXG5cclxudmFyIF9fc2V0TW9kdWxlRGVmYXVsdCA9IE9iamVjdC5jcmVhdGUgPyAoZnVuY3Rpb24obywgdikge1xyXG4gICAgT2JqZWN0LmRlZmluZVByb3BlcnR5KG8sIFwiZGVmYXVsdFwiLCB7IGVudW1lcmFibGU6IHRydWUsIHZhbHVlOiB2IH0pO1xyXG59KSA6IGZ1bmN0aW9uKG8sIHYpIHtcclxuICAgIG9bXCJkZWZhdWx0XCJdID0gdjtcclxufTtcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2ltcG9ydFN0YXIobW9kKSB7XHJcbiAgICBpZiAobW9kICYmIG1vZC5fX2VzTW9kdWxlKSByZXR1cm4gbW9kO1xyXG4gICAgdmFyIHJlc3VsdCA9IHt9O1xyXG4gICAgaWYgKG1vZCAhPSBudWxsKSBmb3IgKHZhciBrIGluIG1vZCkgaWYgKGsgIT09IFwiZGVmYXVsdFwiICYmIE9iamVjdC5wcm90b3R5cGUuaGFzT3duUHJvcGVydHkuY2FsbChtb2QsIGspKSBfX2NyZWF0ZUJpbmRpbmcocmVzdWx0LCBtb2QsIGspO1xyXG4gICAgX19zZXRNb2R1bGVEZWZhdWx0KHJlc3VsdCwgbW9kKTtcclxuICAgIHJldHVybiByZXN1bHQ7XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2ltcG9ydERlZmF1bHQobW9kKSB7XHJcbiAgICByZXR1cm4gKG1vZCAmJiBtb2QuX19lc01vZHVsZSkgPyBtb2QgOiB7IGRlZmF1bHQ6IG1vZCB9O1xyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gX19jbGFzc1ByaXZhdGVGaWVsZEdldChyZWNlaXZlciwgcHJpdmF0ZU1hcCkge1xyXG4gICAgaWYgKCFwcml2YXRlTWFwLmhhcyhyZWNlaXZlcikpIHtcclxuICAgICAgICB0aHJvdyBuZXcgVHlwZUVycm9yKFwiYXR0ZW1wdGVkIHRvIGdldCBwcml2YXRlIGZpZWxkIG9uIG5vbi1pbnN0YW5jZVwiKTtcclxuICAgIH1cclxuICAgIHJldHVybiBwcml2YXRlTWFwLmdldChyZWNlaXZlcik7XHJcbn1cclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBfX2NsYXNzUHJpdmF0ZUZpZWxkU2V0KHJlY2VpdmVyLCBwcml2YXRlTWFwLCB2YWx1ZSkge1xyXG4gICAgaWYgKCFwcml2YXRlTWFwLmhhcyhyZWNlaXZlcikpIHtcclxuICAgICAgICB0aHJvdyBuZXcgVHlwZUVycm9yKFwiYXR0ZW1wdGVkIHRvIHNldCBwcml2YXRlIGZpZWxkIG9uIG5vbi1pbnN0YW5jZVwiKTtcclxuICAgIH1cclxuICAgIHByaXZhdGVNYXAuc2V0KHJlY2VpdmVyLCB2YWx1ZSk7XHJcbiAgICByZXR1cm4gdmFsdWU7XHJcbn1cclxuIiwiaW1wb3J0IHsgQXBwLCBQbHVnaW4sIGRlYm91bmNlIH0gZnJvbSAnb2JzaWRpYW4nO1xuXG5leHBvcnQgZGVmYXVsdCBjbGFzcyBTdGF0aXN0aWNzUGx1Z2luIGV4dGVuZHMgUGx1Z2luIHtcblxuXHRwcml2YXRlIHN0YXR1c0Jhckl0ZW06IFN0YXRpc3RpY3NTdGF0dXNCYXJJdGVtID0gbnVsbDtcblxuXHR1cGRhdGU6ICgpID0+IHZvaWQgPSBkZWJvdW5jZSgoKSA9PiB7IHRoaXMuc3RhdHVzQmFySXRlbS51cGRhdGUoKTsgfSwgMTAwLCB0cnVlKTtcblxuXHRvbmxvYWQoKSB7XG5cdFx0Y29uc29sZS5sb2coJ0xvYWRpbmcgdmF1bHQtc3RhdGlzdGljcyBQbHVnaW4nKTtcblx0XHR0aGlzLnN0YXR1c0Jhckl0ZW0gPSBuZXcgU3RhdGlzdGljc1N0YXR1c0Jhckl0ZW0odGhpcy5hcHAsIHRoaXMuYWRkU3RhdHVzQmFySXRlbSgpKTtcblx0XHR0aGlzLnJlZ2lzdGVyRXZlbnQodGhpcy5hcHAubWV0YWRhdGFDYWNoZS5vbigncmVzb2x2ZWQnLCB0aGlzLnVwZGF0ZSkpO1xuXHRcdHRoaXMudXBkYXRlKCk7XG5cdH1cbn1cblxuaW50ZXJmYWNlIFN0YXRpc3RpY3Mge1xuXHRyZWFkb25seSBbaW5kZXg6IHN0cmluZ10gOiBudW1iZXI7XG5cdG5vdGVzOiBudW1iZXI7XG5cdGxpbmtzOiBudW1iZXI7XG5cdGZpbGVzOiBudW1iZXI7XG5cdGF0dGFjaG1lbnRzOiBudW1iZXI7XG59XG5cbmNsYXNzIFN0YXRpc3RpY3NTdGF0dXNCYXJJdGVtIHtcblx0XG5cdC8vIGhhbmRsZSBvZiB0aGUgYXBwbGljYXRpb24gdG8gcHVsbCBzdGF0cyBmcm9tLlxuXHRwcml2YXRlIGFwcDogQXBwO1xuXG5cdC8vIGhhbmRsZSBvZiB0aGUgc3RhdHVzIGJhciBpdGVtIHRvIGRyYXcgaW50by5cblx0cHJpdmF0ZSBzdGF0dXNCYXJJdGVtOiBIVE1MRWxlbWVudDtcblxuXHQvLyByYXcgc3RhdHNcblx0cHJpdmF0ZSBzdGF0czogU3RhdGlzdGljcyA9IHtub3RlczogMCwgbGlua3M6IDAsIGZpbGVzOiAwLCBhdHRhY2htZW50czogMH07XG5cblx0Ly8ga2V5cyBvZiBgc3RhdHNgIGluIHRoZSBvcmRlciB0byBjeWNsZSB0aHJvdWdoIHRoZW0gd2hlbiB0aGUgc3RhdHVzIGJhciBpdGVtIGlzIGNsaWNrZWQuXG5cdHByaXZhdGUgZGlzcGxheWVkU3RhdHM6IHN0cmluZ1tdID0gWyBcIm5vdGVzXCIsIFwibGlua3NcIiwgXCJmaWxlc1wiLCBcImF0dGFjaG1lbnRzXCJdO1xuXG5cdC8vIGluZGV4IG9mIHRoZSBjdXJyZW50bHkgZGlzcGxheWVkIHN0YXQuXG5cdHByaXZhdGUgZGlzcGxheWVkU3RhdEluZGV4ID0gMDtcblxuXHRjb25zdHJ1Y3RvciAoYXBwOiBBcHAsIHN0YXR1c0Jhckl0ZW06IEhUTUxFbGVtZW50KSB7XG5cdFx0dGhpcy5hcHAgPSBhcHA7XG5cdFx0dGhpcy5zdGF0dXNCYXJJdGVtID0gc3RhdHVzQmFySXRlbTtcblx0XHR0aGlzLnN0YXR1c0Jhckl0ZW0ub25DbGlja0V2ZW50KCgpID0+IHt0aGlzLm9uY2xpY2soKX0pO1xuXHR9XG5cblx0cHJpdmF0ZSByZWZyZXNoKCkge1xuXHRcdGxldCB0aXRsZSA9IFtdO1xuXHRcdHRpdGxlLnB1c2goYCR7dGhpcy5zdGF0cy5ub3Rlc30gbm90ZXNgKTtcblx0XHR0aXRsZS5wdXNoKGAke3RoaXMuc3RhdHMuYXR0YWNobWVudHN9IGF0dGFjaG1lbnRzYCk7XG5cdFx0dGl0bGUucHVzaChgJHt0aGlzLnN0YXRzLmZpbGVzfSBmaWxlc2ApO1xuXHRcdHRpdGxlLnB1c2goYCR7dGhpcy5zdGF0cy5saW5rc30gbGlua3NgKTtcblxuXHRcdHRoaXMuc3RhdHVzQmFySXRlbS5pbm5lclRleHQgPSBgJHt0aGlzLnN0YXRzW3RoaXMuZGlzcGxheWVkU3RhdHNbdGhpcy5kaXNwbGF5ZWRTdGF0SW5kZXhdXX0gJHt0aGlzLmRpc3BsYXllZFN0YXRzW3RoaXMuZGlzcGxheWVkU3RhdEluZGV4XX1gO1xuXHRcdHRoaXMuc3RhdHVzQmFySXRlbS50aXRsZSA9IHRpdGxlLmpvaW4oJ1xcbicpO1xuXHR9XG5cblx0cHJpdmF0ZSBvbmNsaWNrKCkge1xuXHRcdHRoaXMuZGlzcGxheWVkU3RhdEluZGV4ID0gKHRoaXMuZGlzcGxheWVkU3RhdEluZGV4ICsgMSkgJSB0aGlzLmRpc3BsYXllZFN0YXRzLmxlbmd0aDtcblx0XHR0aGlzLnJlZnJlc2goKTtcblx0fVxuXG5cdHB1YmxpYyB1cGRhdGUoKSB7XG5cdFx0bGV0IHN0YXRzID0ge25vdGVzOiAwLCBsaW5rczogMCwgZmlsZXM6IDAsIGF0dGFjaG1lbnRzOiAwfTtcblx0XHR0aGlzLmFwcC52YXVsdC5nZXRGaWxlcygpLmZvckVhY2goKGYpID0+IHtcblx0XHRcdHN0YXRzLmZpbGVzICs9IDE7XG5cdFx0XHRpZiAoZi5leHRlbnNpb24gPT09ICdtZCcpIHtcblx0XHRcdFx0c3RhdHMubm90ZXMgKz0gMTtcblx0XHRcdH0gZWxzZSB7XG5cdFx0XHRcdHN0YXRzLmF0dGFjaG1lbnRzICs9IDE7XG5cdFx0XHR9XG5cdFx0XHRzdGF0cy5saW5rcyArPSB0aGlzLmFwcC5tZXRhZGF0YUNhY2hlLmdldENhY2hlKGYucGF0aCk/LmxpbmtzPy5sZW5ndGggfHwgMDtcblx0XHR9KTtcblxuXHRcdHRoaXMuc3RhdHMgPSBzdGF0cztcblx0XHR0aGlzLnJlZnJlc2goKTtcblx0fVxufVxuIl0sIm5hbWVzIjpbImRlYm91bmNlIiwiUGx1Z2luIl0sIm1hcHBpbmdzIjoiOzs7O0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxJQUFJLGFBQWEsR0FBRyxTQUFTLENBQUMsRUFBRSxDQUFDLEVBQUU7QUFDbkMsSUFBSSxhQUFhLEdBQUcsTUFBTSxDQUFD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
+
+
+/* nosourcemap */

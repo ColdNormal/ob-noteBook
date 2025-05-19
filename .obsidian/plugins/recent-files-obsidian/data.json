@@ -1,20 +1,72 @@
 {
   "recentFiles": [
     {
-      "basename": "Spring Boot -日志",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot -日志.md"
+      "basename": "2413. 最小偶倍数",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2413. 最小偶倍数.md"
+    },
+    {
+      "basename": "2236. 判断根结点是否等于子结点之和",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2236. 判断根结点是否等于子结点之和.md"
+    },
+    {
+      "basename": "1486. 数组异或操作",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1486. 数组异或操作.md"
+    },
+    {
+      "basename": "1512. 好数对的数目",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1512. 好数对的数目.md"
+    },
+    {
+      "basename": "2235. 两整数相加",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2235. 两整数相加.md"
+    },
+    {
+      "basename": "202109121613第一张ZK笔记",
+      "path": "Zettelkasten/202109121613第一张ZK笔记.md"
+    },
+    {
+      "basename": "2469. 温度转换",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2469. 温度转换.md"
+    },
+    {
+      "basename": "Spring Boot接口 -Swagger技术栈",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -Swagger技术栈.md"
+    },
+    {
+      "basename": "git完整工作流",
+      "path": "02笔记库/零碎的知识点/git/git完整工作流.md"
     },
     {
       "basename": "Spring Boot接口 -如何设计多个版本的接口",
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何设计多个版本的接口.md"
     },
     {
-      "basename": "Spring Boot接口 -如何统一封装接口",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何统一封装接口.md"
-    },
-    {
       "basename": "Spring Boot接口 -如何统一异常处理",
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何统一异常处理.md"
+    },
+    {
+      "basename": "README",
+      "path": "02笔记库/Spring Boot学习笔记/README.md"
+    },
+    {
+      "basename": "ZK笔记模板",
+      "path": "模板/ZK笔记模板.md"
+    },
+    {
+      "basename": "未命名",
+      "path": "02笔记库/零碎的知识点/git/未命名.md"
+    },
+    {
+      "basename": "git commit后没有在Github上看见",
+      "path": "02笔记库/零碎的知识点/git/git commit后没有在Github上看见.md"
+    },
+    {
+      "basename": "Spring Boot -日志",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot -日志.md"
+    },
+    {
+      "basename": "Spring Boot接口 -如何统一封装接口",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何统一封装接口.md"
     },
     {
       "basename": "SpringBoot如何自动装配",
@@ -41,10 +93,6 @@
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件 -Lombok.md"
     },
     {
-      "basename": "README",
-      "path": "02笔记库/Spring Boot学习笔记/README.md"
-    },
-    {
       "basename": "Excalidraw演示.excalidraw",
       "path": "00演示文件夹/Excalidraw演示.excalidraw.md"
     },
@@ -57,20 +105,8 @@
       "path": "请先阅读这里（Readme）.md"
     },
     {
-      "basename": "202109121613第一张ZK笔记",
-      "path": "Zettelkasten/202109121613第一张ZK笔记.md"
-    },
-    {
       "basename": "2021-12-06",
       "path": "日记/2021-12-06.md"
-    },
-    {
-      "basename": "git commit后没有在Github上看见",
-      "path": "02笔记库/零碎的知识点/git/git commit后没有在Github上看见.md"
-    },
-    {
-      "basename": "git完整工作流",
-      "path": "02笔记库/零碎的知识点/git/git完整工作流.md"
     },
     {
       "basename": "Spring Boot  CURD demo复盘",
@@ -91,10 +127,6 @@
     {
       "basename": "9aa24375608c4af261ae6a31ee859dca",
       "path": "附件/9aa24375608c4af261ae6a31ee859dca.png"
-    },
-    {
-      "basename": "ZK笔记模板",
-      "path": "模板/ZK笔记模板.md"
     },
     {
       "basename": "前端御三家学习建议（AI）",
@@ -138,5 +170,8 @@
     }
   ],
   "omittedPaths": [],
+  "omittedTags": [],
+  "updateOn": "file-open",
+  "omitBookmarks": false,
   "maxLength": null
 }
