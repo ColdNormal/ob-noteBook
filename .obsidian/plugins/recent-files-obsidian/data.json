@@ -1,6 +1,18 @@
 {
   "recentFiles": [
     {
+      "basename": "1534. 统计好三元组",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1534. 统计好三元组.md"
+    },
+    {
+      "basename": "231. 2 的幂",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/231. 2 的幂.md"
+    },
+    {
+      "basename": "2469. 温度转换",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2469. 温度转换.md"
+    },
+    {
       "basename": "2413. 最小偶倍数",
       "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2413. 最小偶倍数.md"
     },
@@ -9,28 +21,68 @@
       "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2236. 判断根结点是否等于子结点之和.md"
     },
     {
-      "basename": "1486. 数组异或操作",
-      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1486. 数组异或操作.md"
+      "basename": "2235. 两整数相加",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2235. 两整数相加.md"
     },
     {
       "basename": "1512. 好数对的数目",
       "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1512. 好数对的数目.md"
     },
     {
-      "basename": "2235. 两整数相加",
-      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2235. 两整数相加.md"
+      "basename": "1486. 数组异或操作",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1486. 数组异或操作.md"
+    },
+    {
+      "basename": "1281. 整数的各位积和之差",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/1281. 整数的各位积和之差.md"
+    },
+    {
+      "basename": "709. 转换成小写字母",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/709. 转换成小写字母.md"
+    },
+    {
+      "basename": "326. 3 的幂",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/326. 3 的幂.md"
+    },
+    {
+      "basename": "263. 丑数",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/263. 丑数.md"
+    },
+    {
+      "basename": "258. 各位相加",
+      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/258. 各位相加.md"
     },
     {
       "basename": "202109121613第一张ZK笔记",
       "path": "Zettelkasten/202109121613第一张ZK笔记.md"
     },
     {
-      "basename": "2469. 温度转换",
-      "path": "02笔记库/算法题解/入门（积累各种库函数的用法）/2469. 温度转换.md"
+      "basename": "9aa24375608c4af261ae6a31ee859dca",
+      "path": "附件/9aa24375608c4af261ae6a31ee859dca.png"
     },
     {
       "basename": "Spring Boot接口 -Swagger技术栈",
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -Swagger技术栈.md"
+    },
+    {
+      "basename": "Spring Boot接口 -如何统一封装接口",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何统一封装接口.md"
+    },
+    {
+      "basename": "Spring Boot基础 -常用注解",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot基础 -常用注解.md"
+    },
+    {
+      "basename": "Spring Boot插件 -Lombok",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件 -Lombok.md"
+    },
+    {
+      "basename": "Spring Boot -日志",
+      "path": "02笔记库/Spring Boot学习笔记/Spring Boot -日志.md"
+    },
+    {
+      "basename": "git commit后没有在Github上看见",
+      "path": "02笔记库/零碎的知识点/git/git commit后没有在Github上看见.md"
     },
     {
       "basename": "git完整工作流",
@@ -53,24 +105,8 @@
       "path": "模板/ZK笔记模板.md"
     },
     {
-      "basename": "未命名",
-      "path": "02笔记库/零碎的知识点/git/未命名.md"
-    },
-    {
-      "basename": "git commit后没有在Github上看见",
-      "path": "02笔记库/零碎的知识点/git/git commit后没有在Github上看见.md"
-    },
-    {
-      "basename": "Spring Boot -日志",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot -日志.md"
-    },
-    {
-      "basename": "Spring Boot接口 -如何统一封装接口",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot接口 -如何统一封装接口.md"
-    },
-    {
       "basename": "SpringBoot如何自动装配",
-      "path": "02笔记库/零碎的知识点/八股文记录本/SpringBoot如何自动装配.md"
+      "path": "02笔记库/八股文记录本/SpringBoot如何自动装配.md"
     },
     {
       "basename": "Spring Boot接口 -参数校验国际化",
@@ -83,14 +119,6 @@
     {
       "basename": "Spring Boot基础 -特性、MVC分层",
       "path": "02笔记库/Spring Boot学习笔记/Spring Boot基础 -特性、MVC分层.md"
-    },
-    {
-      "basename": "Spring Boot基础 -常用注解",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot基础 -常用注解.md"
-    },
-    {
-      "basename": "Spring Boot插件 -Lombok",
-      "path": "02笔记库/Spring Boot学习笔记/Spring Boot插件 -Lombok.md"
     },
     {
       "basename": "Excalidraw演示.excalidraw",
@@ -123,10 +151,6 @@
     {
       "basename": "快速上手业务",
       "path": "02笔记库/项目/快速上手业务.md"
-    },
-    {
-      "basename": "9aa24375608c4af261ae6a31ee859dca",
-      "path": "附件/9aa24375608c4af261ae6a31ee859dca.png"
     },
     {
       "basename": "前端御三家学习建议（AI）",
